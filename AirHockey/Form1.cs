@@ -11,6 +11,9 @@ using System.Media;
 
 namespace AirHockey
 {
+    // Matthew Barber
+    // March 11, 2021
+    // Air Hockey
     public partial class Form1 : Form
     {
 
@@ -19,30 +22,46 @@ namespace AirHockey
         SoundPlayer bounce = new SoundPlayer(Properties.Resources._456563__bumpelsnake__bounce1);
         SoundPlayer horn = new SoundPlayer(Properties.Resources._170825__santino_c__sirene_horn);
 
-        int paddle1X = 145;
-        int paddle1Y = 30;
+        // Paddles
+        int paddle1X = 150;
+        int paddle1Y = 20;
         int player1Score = 0;
         int paddle1SideCollisionX = 145;
         int paddle1SideCollisionY = 30;
 
-        int paddle2X = 145;
+        int paddle2X = 150;
         int paddle2Y = 450;
         int player2Score = 0;
         int paddle2SideCollisionX = 145;
         int paddle2SideCollisionY = 450;
+        int sideCollisionWidth = 1;
 
 
         int paddleWidth = 30;
         int paddleHeight = 30;
         int paddleSpeed = 4;
 
-
+        // Ball Sizes
         int ballX = 150;
-        int ballY = 250;
+        int ballY = 250 - 15 / 2;
         int ballXSpeed = 6;
         int ballYSpeed = 6;
         int ballWidth = 15;
         int ballHeight = 15;
+
+        // Arena Lines
+        int leftWallX = 10;
+        int rightWallX = 310;
+        int top = 0;
+        int bottom = 500;
+        int leftGoalLineX = 115;
+        int rightGoalLineX = 205;
+        int topBlueLineY = 125;
+        int redLineY = 250;
+        int bottomBlueLineY = 375;
+        int goalLineY = 480;
+
+        // Key Bindings
         bool wDown = false;
         bool sDown = false;
         bool aDown = false;
@@ -51,7 +70,6 @@ namespace AirHockey
         bool downArrowDown = false;
         bool leftArrowDown = false;
         bool rightArrowDown = false;
-
         bool spaceBarDown = false;
         #endregion
 
@@ -61,7 +79,7 @@ namespace AirHockey
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush darkRedBrush = new SolidBrush(Color.DarkRed);
         SolidBrush darkBlueBrush = new SolidBrush(Color.DarkBlue);
-        Pen greenPen = new Pen(Color.LimeGreen,5);
+        Pen greenPen = new Pen(Color.LimeGreen, 5);
         Pen redPen = new Pen(Color.Red, 3);
         Pen bluePen = new Pen(Color.Blue, 3);
         Pen clearPen = new Pen(Color.Transparent, 1);
@@ -145,39 +163,40 @@ namespace AirHockey
         #region Drawings
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            
-            Graphics g = this.CreateGraphics();
+            e.Graphics.DrawLine(greenPen, leftWallX, bottom, leftGoalLineX, bottom);
+            e.Graphics.DrawLine(greenPen, rightGoalLineX, bottom, rightWallX, bottom);
+            e.Graphics.DrawLine(greenPen, leftWallX, top, leftGoalLineX, top);
+            e.Graphics.DrawLine(greenPen, rightGoalLineX, top, rightWallX, top);
+            e.Graphics.DrawLine(redPen, leftWallX, redLineY, rightWallX, redLineY);
+            e.Graphics.DrawLine(bluePen, leftWallX, topBlueLineY, rightWallX, topBlueLineY);
+            e.Graphics.DrawLine(bluePen, leftWallX, bottomBlueLineY, rightWallX, bottomBlueLineY);
+            e.Graphics.DrawLine(greenPen, leftWallX, bottom, leftWallX, top);
+            e.Graphics.DrawLine(greenPen, rightWallX, bottom, rightWallX, top);
             e.Graphics.FillEllipse(whiteBrush, ballX, ballY, ballWidth, ballHeight);
             e.Graphics.FillEllipse(blueBrush, paddle1X, paddle1Y, paddleWidth, paddleHeight);
             e.Graphics.FillEllipse(redBrush, paddle2X, paddle2Y, paddleWidth, paddleHeight);
             e.Graphics.DrawLine(clearPen, paddle1SideCollisionX, paddle1SideCollisionY, paddle1SideCollisionX, paddle1SideCollisionY + paddleHeight);
-            e.Graphics.DrawLine(clearPen, paddle1SideCollisionX + paddleWidth, paddle1SideCollisionY, paddle1SideCollisionX + 
+            e.Graphics.DrawLine(clearPen, paddle1SideCollisionX + paddleWidth, paddle1SideCollisionY, paddle1SideCollisionX +
                 paddleWidth, paddle1SideCollisionY + paddleHeight);
             e.Graphics.DrawLine(clearPen, paddle2SideCollisionX, paddle2SideCollisionY, paddle2SideCollisionX, paddle2SideCollisionY + paddleHeight);
             e.Graphics.DrawLine(clearPen, paddle2SideCollisionX + paddleWidth, paddle2SideCollisionY, paddle2SideCollisionX +
                 paddleWidth, paddle2SideCollisionY + paddleHeight);
 
-            e.Graphics.DrawLine(greenPen, 10, 500, 10, 0);
-            e.Graphics.DrawLine(greenPen, 310, 500, 310, 0);
-            e.Graphics.DrawLine(greenPen, 10, 500, 115, 500);
-            e.Graphics.DrawLine(greenPen, 205, 500, 310, 500);
-            e.Graphics.DrawLine(greenPen, 10, 0, 115, 0);
-            e.Graphics.DrawLine(greenPen, 205, 0, 310, 0);
-            e.Graphics.DrawLine(redPen, 12, 250, 309, 250);
-            e.Graphics.DrawLine(bluePen, 12, 125, 309, 125);
-            e.Graphics.DrawLine(bluePen, 12, 375, 309, 375);
+
             #endregion
 
         }
 
         private void GameTimer_Tick(object sender, EventArgs e)
         {
+            winnerLabel.Text = "Press SpaceBar To Begin";
             #region Ball Movement
             int x = ballX;
             int y = ballY;
 
             if (spaceBarDown == true)
             {
+                winnerLabel.Text = "";
                 //move ball 
                 ballX += ballXSpeed;
                 ballY += ballYSpeed;
@@ -186,23 +205,23 @@ namespace AirHockey
 
             #region Paddle Movement
             //move player 1 
-            if (wDown == true && paddle1Y > 0)
+            if (wDown == true && paddle1Y > top)
             {
                 paddle1Y -= paddleSpeed;
                 paddle1SideCollisionY -= paddleSpeed;
             }
 
-            if (sDown == true && paddle1Y < this.Height - paddleHeight && paddle1Y < 250 - paddleHeight)
+            if (sDown == true && paddle1Y < this.Height - paddleHeight && paddle1Y < redLineY - paddleHeight)
             {
                 paddle1Y += paddleSpeed;
                 paddle1SideCollisionY += paddleSpeed;
             }
-            if (aDown == true && paddle1X > 10)
+            if (aDown == true && paddle1X > leftWallX)
             {
                 paddle1X -= paddleSpeed;
                 paddle1SideCollisionX -= paddleSpeed;
             }
-            if (dDown == true && paddle1X < 310 - paddleWidth)
+            if (dDown == true && paddle1X < rightWallX - paddleWidth)
             {
                 paddle1X += paddleSpeed;
                 paddle1SideCollisionX += paddleSpeed;
@@ -210,7 +229,7 @@ namespace AirHockey
 
 
             //move player 2 
-            if (upArrowDown == true && paddle2Y > 0 && paddle2Y > 250)
+            if (upArrowDown == true && paddle2Y > top && paddle2Y > redLineY)
             {
                 paddle2Y -= paddleSpeed;
                 paddle2SideCollisionY -= paddleSpeed;
@@ -221,12 +240,12 @@ namespace AirHockey
                 paddle2Y += paddleSpeed;
                 paddle2SideCollisionY += paddleSpeed;
             }
-            if (leftArrowDown == true && paddle2X > 10)
+            if (leftArrowDown == true && paddle2X > leftWallX)
             {
                 paddle2X -= paddleSpeed;
                 paddle2SideCollisionX -= paddleSpeed;
             }
-            if (rightArrowDown == true && paddle2X < 310 - paddleWidth)
+            if (rightArrowDown == true && paddle2X < rightWallX - paddleWidth)
             {
                 paddle2X += paddleSpeed;
                 paddle2SideCollisionX += paddleSpeed;
@@ -235,20 +254,21 @@ namespace AirHockey
 
             #region Ball Colisions
             //Check for ball collision with sides
-            if (ballY < 0 && ballX < 115 || ballY < 0 && ballX > 205 || ballY > 480 && ballX < 115 || ballY > 480 && ballX > 205)
+            if (ballY < top && ballX < leftGoalLineX || ballY < top && ballX > rightGoalLineX ||
+                ballY > goalLineY && ballX < leftGoalLineX || ballY > goalLineY && ballX > rightGoalLineX)
             {
                 ballX = x;
                 ballY = y;
                 ballYSpeed *= -1;  // or: ballYSpeed = -ballYSpeed; 
                 bounce.Play();
             }
-            if (ballX > 310 - ballWidth)
+            if (ballX > rightWallX - ballWidth)
             {
                 ballXSpeed *= -1;
                 ballX -= ballWidth;
                 bounce.Play();
             }
-            if (ballX < 10)
+            if (ballX < leftWallX)
             {
                 ballXSpeed *= -1;
                 ballX += ballWidth;
@@ -259,12 +279,12 @@ namespace AirHockey
             #region Paddle and Ball Drawings
             //create Rectangles of objects on screen to be used for collision detection 
             Rectangle player1Rec = new Rectangle(paddle1X, paddle1Y, paddleWidth, paddleHeight);
-                Rectangle player2Rec = new Rectangle(paddle2X, paddle2Y, paddleWidth, paddleHeight);
-                Rectangle ballRec = new Rectangle(ballX, ballY, ballWidth, ballHeight);
-            Rectangle paddle1RightWall = new Rectangle(paddle1SideCollisionX + paddleWidth, paddle1SideCollisionY, 1, paddleHeight + 5);
-            Rectangle paddle1LeftWall = new Rectangle(paddle1SideCollisionX, paddle1SideCollisionY, 1, paddleHeight + 5);
-            Rectangle paddle2RightWall = new Rectangle(paddle2SideCollisionX + paddleWidth, paddle2SideCollisionY, 1, paddleHeight + 5);
-            Rectangle paddle2LeftWall = new Rectangle(paddle2SideCollisionX, paddle2SideCollisionY, 1, paddleHeight + 5);
+            Rectangle player2Rec = new Rectangle(paddle2X, paddle2Y, paddleWidth, paddleHeight);
+            Rectangle ballRec = new Rectangle(ballX, ballY, ballWidth, ballHeight);
+            Rectangle paddle1RightWall = new Rectangle(paddle1SideCollisionX + paddleWidth, paddle1SideCollisionY, sideCollisionWidth, paddleHeight);
+            Rectangle paddle1LeftWall = new Rectangle(paddle1SideCollisionX, paddle1SideCollisionY, sideCollisionWidth, paddleHeight);
+            Rectangle paddle2RightWall = new Rectangle(paddle2SideCollisionX + paddleWidth, paddle2SideCollisionY, sideCollisionWidth, paddleHeight);
+            Rectangle paddle2LeftWall = new Rectangle(paddle2SideCollisionX, paddle2SideCollisionY, sideCollisionWidth, paddleHeight);
 
 
             //check if ball hits either paddle. If it does change the direction 
@@ -278,20 +298,20 @@ namespace AirHockey
                 ballX = x;
                 ballY = y;
                 ballYSpeed *= -1;
-                
-                               
+
+
                 //ballY = paddle1Y + ballHeight + 1;
                 bounce.Play();
             }
             if (paddle1RightWall.IntersectsWith(ballRec))
             {
-                
+
                 ballXSpeed *= -1;
                 ballX += ballWidth;
             }
             if (paddle1LeftWall.IntersectsWith(ballRec))
             {
-                
+
                 ballXSpeed *= -1;
                 ballX -= ballWidth;
             }
@@ -301,19 +321,19 @@ namespace AirHockey
                 ballX = x;
                 ballY = y;
                 ballYSpeed *= -1;
-                
+
                 bounce.Play();
-                
+
             }
             if (paddle2RightWall.IntersectsWith(ballRec))
             {
-                
+
                 ballXSpeed *= -1;
                 ballX += ballWidth;
             }
             if (paddle2LeftWall.IntersectsWith(ballRec))
             {
-                
+
                 ballXSpeed *= -1;
                 ballX -= ballWidth;
             }
@@ -321,13 +341,14 @@ namespace AirHockey
 
             #region Scoring
             //Check if either player scores a point
-            if (ballY < 0 && ballX > 115 && ballX < 205)
+            // Player 2 Scoring
+            if (ballY < top && ballX > leftGoalLineX && ballX < rightGoalLineX)
             {
                 player2Score++;
 
                 p2ScoreLabel.Text = $"{player2Score}";
 
-
+                
 
                 ballX = 150;
                 ballY = 250;
@@ -342,8 +363,12 @@ namespace AirHockey
                 paddle2SideCollisionY = 450;
 
                 horn.Play();
+
+                
             }
-            if (ballY > 500 - ballHeight && ballX > 115 && ballX < 205)
+
+            // Player 1 Scoring
+            if (ballY > bottom - ballHeight && ballX > leftGoalLineX && ballX < rightGoalLineX)
             {
                 player1Score++;
 
@@ -352,7 +377,7 @@ namespace AirHockey
 
 
                 ballX = 150;
-                ballY = 250;
+                ballY = 250 - 15 / 2;
 
                 paddle1X = 150;
                 paddle2X = 150;
@@ -370,6 +395,15 @@ namespace AirHockey
             if (player1Score == 3 || player2Score == 3)
             {
                 gameTimer.Enabled = false;
+
+                if (player1Score == 3)
+                {
+                    winnerLabel.Text = "Blue Team Wins";
+                }
+                if (player2Score == 3)
+                {
+                    winnerLabel.Text = "Red Team Wins";
+                }
             }
 
             Refresh();

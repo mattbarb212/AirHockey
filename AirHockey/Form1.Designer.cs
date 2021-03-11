@@ -34,6 +34,7 @@
             this.p2ScoreLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.winnerLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // gameTimer
@@ -90,12 +91,24 @@
             this.label2.Text = "Red Team";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // winnerLabel
+            // 
+            this.winnerLabel.BackColor = System.Drawing.Color.Transparent;
+            this.winnerLabel.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.winnerLabel.ForeColor = System.Drawing.Color.White;
+            this.winnerLabel.Location = new System.Drawing.Point(323, 190);
+            this.winnerLabel.Name = "winnerLabel";
+            this.winnerLabel.Size = new System.Drawing.Size(185, 95);
+            this.winnerLabel.TabIndex = 6;
+            this.winnerLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(510, 500);
+            this.Controls.Add(this.winnerLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.p2ScoreLabel);
@@ -119,6 +132,7 @@
         private System.Windows.Forms.Label p2ScoreLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label winnerLabel;
     }
 }
 
